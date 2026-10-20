@@ -244,7 +244,16 @@ function installBanner(always) {
 /* ---------- sheets ---------- */
 const sheet = $('#sheet');
 function openSheet(html) { $('#sheetBody').innerHTML = html; if (!sheet.open) sheet.showModal(); }
-function closeSheet() { if (sheet.open) sheet.close(); render(); }
+function closeSheet() { if (sheet.open) sheet.close(); render(); reloadIfIdle(); }
+
+// A new version has taken over: reload into it, but not while an item is being edited.
+let updatePending = false;
+function reloadIfIdle() {
+  const el = document.activeElement;
+  // A closed sheet can leave focus on its hidden input, which is not typing.
+  const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(el?.tagName || '') && !el.closest('dialog:not([open])');
+  if (updatePending && !sheet.open && !typing) { updatePending = false; location.reload(); }
+}
 sheet.addEventListener('click', e => { if (e.target === sheet) closeSheet(); });
 sheet.addEventListener('cancel', e => { e.preventDefault(); closeSheet(); });
 
@@ -501,23 +510,16 @@ window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); instal
 window.addEventListener('appinstalled', () => { installEvt = null; render(); });
 document.addEventListener('visibilitychange', () => { if (!document.hidden) { render(); checkReminders(); } });
 if ('serviceWorker' in navigator) {
+  const hadController = !!navigator.serviceWorker.controller;
   navigator.serviceWorker.register('sw.js').then(reg => {
     registerPeriodic();
-    // A new version found while the app is open shows the update bar.
-    const showBar = () => {
-      $('#updateBar').hidden = false;
-      $('#reloadBtn').onclick = () => reg.waiting?.postMessage({ type: 'SKIP_WAITING' });
-    };
-    if (reg.waiting && navigator.serviceWorker.controller) showBar();
-    reg.addEventListener('updatefound', () => {
-      // Only an update replaces a running version; the very first install has nothing to refresh.
-      const nw = reg.installing, hadActive = !!reg.active;
-      nw?.addEventListener('statechange', () => { if (hadActive && nw.state === 'installed' && reg.waiting === nw) showBar(); });
-    });
     document.addEventListener('visibilitychange', () => { if (!document.hidden) reg.update().catch(() => {}); });
   }).catch(() => {});
-  let refreshing = false;
-  navigator.serviceWorker.addEventListener('controllerchange', () => { if (!refreshing) { refreshing = true; location.reload(); } });
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!hadController) return; // first install, nothing to swap
+    updatePending = true; reloadIfIdle();
+  });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) reloadIfIdle(); });
 }
 
 if (location.hash === '#refill') view = 'refill';

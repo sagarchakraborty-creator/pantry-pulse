@@ -1,15 +1,12 @@
 // Pantry Pulse service worker: offline app shell, background low-stock check, notification taps.
 // Bump VERSION on every release, or phones keep the old copy.
-const VERSION = '2026-10-20.2';
+const VERSION = '2026-10-20.3';
 const SHELL = `pantry-shell-${VERSION}`;
 const FILES = ['./', 'index.html', 'styles.css', 'app.js', 'manifest.json', 'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-512-maskable.png', 'icons/badge-96.png'];
 
-// The first install takes over at once; later versions wait until the user taps "Refresh" in the update bar.
+// New versions take over as soon as they are downloaded; the page reloads itself when it is safe to.
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(SHELL).then(c => c.addAll(FILES)).then(() => { if (!self.registration.active) self.skipWaiting(); }));
-});
-self.addEventListener('message', e => {
-  if (e.data?.type === 'SKIP_WAITING') self.skipWaiting();
+  e.waitUntil(caches.open(SHELL).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
 });
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys()
