@@ -13,6 +13,6 @@ Your stock is saved on your phone only. Use Settings → *Save backup* to keep a
 ## Update
 1. Edit the files.
 2. Change `VERSION` in `sw.js`.
-3. Commit and push. Phones show “New version ready” on next open.
+3. Commit and push. Phones update by themselves the next time the app is opened (it waits if an item is being edited).
 
 Local testing: `powershell -ExecutionPolicy Bypass -File serve.ps1` → http://localhost:8771/
