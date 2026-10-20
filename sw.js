@@ -1,6 +1,6 @@
 // Pantry Pulse service worker: offline app shell, background low-stock check, notification taps.
 // Bump VERSION on every release, or phones keep the old copy.
-const VERSION = '2026-10-20.1';
+const VERSION = '2026-10-20.2';
 const SHELL = `pantry-shell-${VERSION}`;
 const FILES = ['./', 'index.html', 'styles.css', 'app.js', 'manifest.json', 'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-512-maskable.png', 'icons/badge-96.png'];
 

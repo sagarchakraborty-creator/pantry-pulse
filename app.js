@@ -510,8 +510,9 @@ if ('serviceWorker' in navigator) {
     };
     if (reg.waiting && navigator.serviceWorker.controller) showBar();
     reg.addEventListener('updatefound', () => {
-      const nw = reg.installing;
-      nw?.addEventListener('statechange', () => { if (nw.state === 'installed' && navigator.serviceWorker.controller) showBar(); });
+      // Only an update replaces a running version; the very first install has nothing to refresh.
+      const nw = reg.installing, hadActive = !!reg.active;
+      nw?.addEventListener('statechange', () => { if (hadActive && nw.state === 'installed' && reg.waiting === nw) showBar(); });
     });
     document.addEventListener('visibilitychange', () => { if (!document.hidden) reg.update().catch(() => {}); });
   }).catch(() => {});
