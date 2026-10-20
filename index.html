@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pantry Pulse</title>
+<meta name="description" content="Track how much grocery stock you have left and get a weekend refill list.">
+<meta name="theme-color" content="#1f6b45">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Pantry">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <div>
+      <h1 id="title">Pantry</h1>
+      <p id="subtitle" class="sub"></p>
+    </div>
+    <button id="checkBtn" class="pill-btn" type="button">Stock check</button>
+  </div>
+</header>
+
+<div id="updateBar" class="update-bar" hidden>
+  <span>New version ready</span><button id="reloadBtn" class="btn small" type="button">Refresh</button>
+</div>
+
+<main id="main"></main>
+
+<button id="fab" class="fab" type="button" aria-label="Add item">+ Add item</button>
+
+<nav class="tabs" aria-label="Sections">
+  <button type="button" data-view="stock" class="on"><span class="ti">◐</span>Stock</button>
+  <button type="button" data-view="refill"><span class="ti">✓</span>Refill<b id="refillCount" hidden></b></button>
+  <button type="button" data-view="settings"><span class="ti">⚙</span>Settings</button>
+</nav>
+
+<dialog id="sheet" class="sheet"><div id="sheetBody"></div></dialog>
+<div id="toast" class="toast" role="status" hidden></div>
+<input id="importFile" type="file" accept="application/json,.json" hidden>
+
+<script src="app.js"></script>
+</body>
+</html>
